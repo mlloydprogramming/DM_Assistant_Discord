@@ -71,7 +71,6 @@ class Players(commands.Cog):
             f"Spent **{amount}** coints. New balance is **{bal}** coins.\n"
             f"The party has now spent a total of **{total_xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - total_xp_spent}** XP left to raise the party level.",
         )
-        
 
     @app_commands.command(name="get_party_level", description="Get the party's current level")
     async def get_party_level(self, interaction: discord.Interaction):
@@ -79,6 +78,30 @@ class Players(commands.Cog):
         await interaction.response.send_message(
             f"The party is currently at level **{level}**."
         )
+
+    @app_commands.command(name="set_character_sheet", description="Set your character sheet URL")
+    async def set_character_sheet(self, interaction: discord.Interaction, url: str):
+        user_id = interaction.user.id
+        db.set_character_sheet(user_id, url)
+        await interaction.response.send_message(
+            "Your character sheet URL has been updated.",
+            ephemeral=True,
+        )
+    
+    @app_commands.command(name="get_character_sheet", description="Get your character sheet URL")
+    async def get_character_sheet(self, interaction: discord.Interaction):
+        user_id = interaction.user.id
+        url = db.get_character_sheet(user_id)
+        if url:
+            await interaction.response.send_message(
+                f"Your character sheet URL is: {url}",
+                ephemeral=True,
+            )
+        else:
+            await interaction.response.send_message(
+                "You have not set a character sheet URL yet.",
+                ephemeral=True,
+            )
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Players(bot))

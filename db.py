@@ -12,7 +12,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS players (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             discord_id INTEGER UNIQUE NOT NULL,
-            balance INTEGER NOT NULL DEFAULT 0
+            balance INTEGER NOT NULL DEFAULT 0,
+            character_sheet TEXT
         );
         """
     )
@@ -136,4 +137,32 @@ def get_party_level() -> int:
     conn.close()
     if row is None:
         return 1
+    return row[0]
+
+def set_character_sheet(discord_id: int, url: str):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, balance, character_sheet)
+        VALUES (?, 0, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET character_sheet = excluded.character_sheet;
+        """,
+        (discord_id, url),
+    )
+    conn.commit()
+    conn.close()
+
+def get_character_sheet(discord_id: int) -> str | None:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT character_sheet FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return None
     return row[0]
