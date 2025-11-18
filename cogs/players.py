@@ -1,7 +1,8 @@
 import discord
+import constants
 from discord import app_commands
 from discord.ext import commands
-from db import get_balance, set_balance
+import db
 
 class Players(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -17,7 +18,7 @@ class Players(commands.Cog):
     @app_commands.command(name="get_balance", description="Get your current balance")
     async def get_balance(self, interaction: discord.Interaction):
         user_id = interaction.user.id
-        bal = get_balance(user_id)
+        bal = db.get_balance(user_id)
         await interaction.response.send_message(
             f"You have **{bal}** coins.",
             ephemeral=True
@@ -26,7 +27,7 @@ class Players(commands.Cog):
     @app_commands.command(name="spend_balance", description="Spend a specific amount from your balance")
     async def spend_balance(self, interaction: discord.Interaction, amount: int):
         user_id = interaction.user.id
-        current = get_balance(user_id)
+        current = db.get_balance(user_id)
         if amount > current:
             await interaction.response.send_message(
                 f"You cannot spend **{amount}** coins as you only have **{current}** coins.",
@@ -34,11 +35,35 @@ class Players(commands.Cog):
             )
         else:
             new_balance = current - amount
-            set_balance(user_id, new_balance)
+            db.set_balance(user_id, new_balance)
             await interaction.response.send_message(
                 f"Spend **{amount}** coins. New balance is **{new_balance}** coins.",
                 ephemeral=True,
             )
+
+    @app_commands.command(name="get_party_xp_spent", description="Get total party XP spent")
+    async def get_party_xp_spent(self, interaction: discord.Interaction):
+        xp_spent = db.get_party_xp_spent()
+        level = db.get_party_level()
+        await interaction.response.send_message(
+            f"The party has spent a total of **{xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - xp_spent}** XP left to raise the party level.",
+        )
+
+    @app_commands.command(name="add_party_xp_spent", description="Add to the party's total XP spent")
+    async def add_party_xp_spent(self, interaction: discord.Interaction, amount: int):
+        level = db.get_party_level()
+        db.add_party_xp_spent(amount)
+        xp_spent = db.get_party_xp_spent()
+        await interaction.response.send_message(
+            f"Added **{amount}** XP to the party's total spent. **{constants.LEVEL_REQUIREMENTS[level+1] - xp_spent}** XP left to raise the party level.",
+        )
+
+    @app_commands.command(name="get_party_level", description="Get the party's current level")
+    async def get_party_level(self, interaction: discord.Interaction):
+        level = db.get_party_level()
+        await interaction.response.send_message(
+            f"The party is currently at level **{level}**.",
+        )
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Players(bot))

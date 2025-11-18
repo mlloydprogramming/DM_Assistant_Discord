@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from db import get_balance, set_balance
+from db import set_balance, add_balance, set_party_xp_spent, set_party_level
 
 DM_ROLE_NAME = "Dungeon Master"
 
@@ -37,12 +37,41 @@ class DM(commands.Cog):
     @app_commands.check(is_dm)
     @app_commands.guild_only()
     async def set_balance(self, interaction: discord.Interaction, member: discord.Member, amount: int):
-        current = get_balance(member.id)
-        new_balance = current + amount
+        new_balance = amount
         set_balance(member.id, new_balance)
         await interaction.response.send_message(
-            f"Added {amount} to {member.display_name}'s balance. New total is **{new_balance}** coins.",
+            f"Set {member.display_name}'s balance to **{new_balance}** coins.",
             ephemeral=True
+        )
+
+    @app_commands.command(name="add_balance", description="Add an amount to player's balance")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def add_balance(self, interaction: discord.Interaction, member: discord.Member, amount: int):
+        add_balance(member.id, amount)
+        await interaction.response.send_message(
+            f"Added **{amount}** coins to {member.display_name}'s balance.",
+            ephemeral=True,
+        )
+
+    @app_commands.command(name="set_party_xp_spent", description="Set the party's total XP spent to a specific amount")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def set_party_xp_spent(self, interaction: discord.Interaction, amount: int):
+        set_party_xp_spent(amount)
+        await interaction.response.send_message(
+            f"Set the party's total XP spent to **{amount}** XP.",
+            ephemeral=True,
+        )
+
+    @app_commands.command(name="set_party_level", description="Set the party's current level")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def set_party_level(self, interaction: discord.Interaction, level: int):
+        set_party_level(level)
+        await interaction.response.send_message(
+            f"Set the party's level to **{level}**.",
+            ephemeral=True,
         )
 
 
