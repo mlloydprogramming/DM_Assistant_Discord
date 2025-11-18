@@ -47,6 +47,15 @@ def get_balance(discord_id: int) -> int:
         return 0
     return row[0]
 
+def spend_balance(discord_id: int, amount: int):
+    if amount < 0:
+        raise ValueError("Amount to spend must be non-negative")
+    current_balance = get_balance(discord_id)
+    if amount > current_balance:
+        raise ValueError("Insufficient balance to spend the requested amount")
+    new_balance = current_balance - amount
+    set_balance(discord_id, new_balance)
+
 def set_balance(discord_id: int, balance: int):
     conn = get_connection()
     cur = conn.cursor()

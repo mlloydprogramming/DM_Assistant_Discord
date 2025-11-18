@@ -34,8 +34,7 @@ class Players(commands.Cog):
                 ephemeral=True,
             )
         else:
-            new_balance = current - amount
-            db.set_balance(user_id, new_balance)
+            new_balance = db.spend_balance(user_id, amount)
             await interaction.response.send_message(
                 f"Spend **{amount}** coins. New balance is **{new_balance}** coins.",
                 ephemeral=True,
@@ -52,17 +51,33 @@ class Players(commands.Cog):
     @app_commands.command(name="add_party_xp_spent", description="Add to the party's total XP spent")
     async def add_party_xp_spent(self, interaction: discord.Interaction, amount: int):
         level = db.get_party_level()
+        user_id = interaction.user.id
+        current = db.get_balance(user_id)
+        if amount > current:
+            await interaction.response.send_message(
+                f"You cannot spend **{amount}** coins as you only have **{current}** coins.",
+                ephemeral=True,
+            )
+        # Spend Player coins
+        db.spend_balance(user_id, amount)
+        bal = db.get_balance(user_id)
+
+        # Update the party XP spent total
         db.add_party_xp_spent(amount)
-        xp_spent = db.get_party_xp_spent()
+
+        total_xp_spent = db.get_party_xp_spent()
+
         await interaction.response.send_message(
-            f"Added **{amount}** XP to the party's total spent. **{constants.LEVEL_REQUIREMENTS[level+1] - xp_spent}** XP left to raise the party level.",
+            f"Spent **{amount}** coints. New balance is **{bal}** coins.\n"
+            f"The party has now spent a total of **{total_xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - total_xp_spent}** XP left to raise the party level.",
         )
+        
 
     @app_commands.command(name="get_party_level", description="Get the party's current level")
     async def get_party_level(self, interaction: discord.Interaction):
         level = db.get_party_level()
         await interaction.response.send_message(
-            f"The party is currently at level **{level}**.",
+            f"The party is currently at level **{level}**."
         )
 
 async def setup(bot: commands.Bot):
