@@ -8,6 +8,14 @@ class Players(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    async def buy_autocomplete(self, interaction:discord.Interaction, current: str):
+        options = []
+
+        for name in constants.SHOP_OPTIONS.keys():
+            if current.lower() in name.lower():
+                options.append(app_commands.Choice(name=name, value=name))
+        return options[:25]
+
     @app_commands.command(name="players_test", description="Test players command")
     async def players_test(self, interaction: discord.Interaction):
         await interaction.response.send_message(
@@ -104,6 +112,66 @@ class Players(commands.Cog):
                 "You have not set a character sheet URL yet.",
                 ephemeral=True,
             )
+
+    
+
+    @app_commands.command(name="shop", description="View available shop options")
+    async def shop(self, interaction: discord.Interaction):
+        lines: list[str] = []
+
+        for item_name, item_data in constants.SHOP_OPTIONS.items():
+            cost = item_data["cost"]
+            cost_str = f"{cost} coins" if isinstance(cost, int) else cost
+
+            lines.append(
+                f"**{item_name}** - Cost: **{cost_str}**\n"
+                f"{item_data['description']}"
+            )
+        
+        shop_message = "\n\n".join(lines)
+
+        await interaction.response.send_message(
+            f"**Available Shop Options:**\n\n{shop_message}",
+            ephemeral=True,
+        )
+
+    @app_commands.command(name="buy", description="Buy an item from the shop")
+    @app_commands.describe(item="What do you want to buy?")
+    @app_commands.autocomplete(item=buy_autocomplete)
+    async def buy(self, interaction: discord.Interaction, item: str):
+        user_id = interaction.user.id
+        if item not in constants.SHOP_OPTIONS:
+            await interaction.response.send_message("That is not something you can buy.", ephemeral=True)
+            return
+        
+        item_info = constants.SHOP_OPTIONS[item]
+        cost = item_info["cost"]
+
+        if cost == "variable":
+            await interaction.response.send_message(
+                "This item has a variable cost. Please utilize the dedicated command.\n"
+                "Use `/add_party_xp_spent` to add XP to the party pool.",
+                ephemeral=True,
+            )
+            return
+        
+        current = db.get_balance(user_id)
+
+        if current < cost:
+            await interaction.response.send_message(
+                f"You need **{cost}** coins to buy **{item}**, but you only have **{current}** coins.",
+                ephemeral=True,
+            )
+            return
+        
+        db.spend_balance(user_id, cost)
+
+        await interaction.response.send_message(
+            f"You purchased **{item}** for **{cost}** coins!\n\n"
+            f"**{item_info['description']}**",
+            ephemeral=True,
+        )
+            
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Players(bot))
