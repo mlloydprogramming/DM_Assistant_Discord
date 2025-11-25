@@ -150,7 +150,7 @@ class Players(commands.Cog):
         if cost == "variable":
             await interaction.response.send_message(
                 "This item has a variable cost. Please utilize the dedicated command.\n"
-                "Use `/add_party_xp_spent` to add XP to the party pool.",
+                "Use ```/add_party_xp_spent``` to add XP to the party pool.",
                 ephemeral=True,
             )
             return
