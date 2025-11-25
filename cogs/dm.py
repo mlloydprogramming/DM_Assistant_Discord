@@ -57,20 +57,22 @@ class DM(commands.Cog):
     @app_commands.command(name="set_party_xp_spent", description="Set the party's total XP spent to a specific amount")
     @app_commands.check(is_dm)
     @app_commands.guild_only()
-    async def set_party_xp_spent(self, interaction: discord.Interaction, amount: int):
-        set_party_xp_spent(amount)
+    async def set_party_xp_spent(self, interaction: discord.Interaction, amount: int, role: discord.Role):
+        role_id = role.id
+        set_party_xp_spent(amount, role_id)
         await interaction.response.send_message(
-            f"Set the party's total XP spent to **{amount}** XP.",
+            f"Set the party **{role.name}** total XP spent to **{amount}** XP.",
             ephemeral=True,
         )
 
     @app_commands.command(name="set_party_level", description="Set the party's current level")
     @app_commands.check(is_dm)
     @app_commands.guild_only()
-    async def set_party_level(self, interaction: discord.Interaction, level: int):
-        set_party_level(level)
+    async def set_party_level(self, interaction: discord.Interaction, level: int, role: discord.Role):
+        role_id = role.id
+        set_party_level(level, role_id)
         await interaction.response.send_message(
-            f"Set the party's level to **{level}**.",
+            f"Set the party **{role.name}** level to **{level}**.",
             ephemeral=True,
         )
 

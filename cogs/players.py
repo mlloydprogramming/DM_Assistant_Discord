@@ -49,8 +49,9 @@ class Players(commands.Cog):
         )
 
     @app_commands.command(name="add_party_xp_spent", description="Add to the party's total XP spent")
-    async def add_party_xp_spent(self, interaction: discord.Interaction, amount: int):
-        level = db.get_party_level()
+    async def add_party_xp_spent(self, interaction: discord.Interaction, amount: int, role: discord.Role):
+        role_id = role.id
+        level = db.get_party_level(role_id)
         user_id = interaction.user.id
         current = db.get_balance(user_id)
         if amount > current:
@@ -59,24 +60,25 @@ class Players(commands.Cog):
                 ephemeral=True,
             )
         # Spend Player coins
-        db.spend_balance(user_id, amount)
+        db.spend_balance(amount)
         bal = db.get_balance(user_id)
 
         # Update the party XP spent total
-        db.add_party_xp_spent(amount)
+        db.add_party_xp_spent(amount, role_id)
 
-        total_xp_spent = db.get_party_xp_spent()
+        total_xp_spent = db.get_party_xp_spent(role_id)
 
         await interaction.response.send_message(
-            f"Spent **{amount}** coints. New balance is **{bal}** coins.\n"
-            f"The party has now spent a total of **{total_xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - total_xp_spent}** XP left to raise the party level.",
+            f"Spent **{amount}** coins. New balance is **{bal}** coins.\n"
+            f"The party **{role.name}** has now spent a total of **{total_xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - total_xp_spent}** XP left to raise the party level.",
         )
 
     @app_commands.command(name="get_party_level", description="Get the party's current level")
-    async def get_party_level(self, interaction: discord.Interaction):
-        level = db.get_party_level()
+    async def get_party_level(self, interaction: discord.Interaction, role: discord.Role):
+        role_id = role.id
+        level = db.get_party_level(role_id)
         await interaction.response.send_message(
-            f"The party is currently at level **{level}**."
+            f"The party **{role.name}** is currently at level **{level}**."
         )
 
     @app_commands.command(name="set_character_sheet", description="Set your character sheet URL")
