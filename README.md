@@ -19,8 +19,9 @@ A Discord bot designed to assist Dungeon Masters in running westmarch-style, rog
 
 Before you begin, ensure you have:
 
-- **Python 3.13 or higher** installed
-- **[uv](https://github.com/astral-sh/uv)** package manager
+- **Python 3.13 or higher** installed (not required for Docker deployment)
+- **[uv](https://github.com/astral-sh/uv)** package manager (not required for Docker deployment)
+- **Docker and Docker Compose** (optional, for containerized deployment)
 - A **Discord account** with permissions to create applications
 - A **Discord server** where you have administrative rights
 
@@ -94,6 +95,8 @@ Use the generated OAuth2 URL to invite the bot to your server.
 
 ## 🎮 Running the Bot
 
+### Option 1: Running Locally
+
 Start the bot with:
 ```bash
 uv run main.py
@@ -104,6 +107,49 @@ You should see output similar to:
 Slash commands synced.
 Logged in as YourBotName (ID: 123456789)
 ```
+
+### Option 2: Running with Docker Compose (Recommended for Homelab)
+
+1. **Ensure your `.env` file is configured** with your Discord bot token
+
+2. **Start the bot**:
+   ```bash
+   docker-compose up -d
+   ```
+
+3. **View logs**:
+   ```bash
+   docker-compose logs -f
+   ```
+
+4. **Stop the bot**:
+   ```bash
+   docker-compose down
+   ```
+
+The bot will automatically restart unless manually stopped. The database is persisted in the `./data` directory on your host machine.
+
+### Option 3: Running with Docker (Manual)
+
+1. **Build the image**:
+   ```bash
+   docker build -t dm-assistant-bot .
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker run -d \
+     --name dm-assistant-bot \
+     --restart unless-stopped \
+     -e DISCORD_BOT_TOKEN=your_token_here \
+     -v $(pwd)/data:/app/data \
+     dm-assistant-bot
+   ```
+
+3. **View logs**:
+   ```bash
+   docker logs -f dm-assistant-bot
+   ```
 
 ## 📖 Commands
 
@@ -171,6 +217,9 @@ dm_assistant_bot/
 │   ├── dm.py           # DM-only commands
 │   └── players.py      # Player commands
 ├── data/               # SQLite database directory (auto-created)
+├── Dockerfile          # Docker container definition
+├── docker-compose.yml  # Docker Compose configuration
+├── .dockerignore       # Files to exclude from Docker build
 ├── .env                # Environment variables (not in repo)
 ├── .env.example        # Example environment file
 ├── pyproject.toml      # Project dependencies
@@ -198,6 +247,11 @@ dm_assistant_bot/
 - Wait a few minutes for Discord to update slash commands globally
 - Try using the commands in a different channel
 - Use `/` in Discord to see if commands appear in the autocomplete
+
+### Docker-specific issues
+- **Container won't start**: Check logs with `docker-compose logs` or `docker logs dm-assistant-bot`
+- **Database not persisting**: Ensure the `./data` volume mount is correct
+- **Permission errors**: On Linux, you may need to adjust ownership: `sudo chown -R $USER:$USER data/`
 
 ## 📄 License
 

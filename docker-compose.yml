@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  dm-assistant-bot:
+    build: .
+    container_name: dm-assistant-bot
+    restart: unless-stopped
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+    volumes:
+      # Persist the database outside the container
+      - ./data:/app/data
+    # Optional: limit resources
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
