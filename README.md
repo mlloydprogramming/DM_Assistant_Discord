@@ -206,6 +206,12 @@ The bot uses SQLite to store persistent data:
 - `discord_id` - Unique player identifier
 - `balance` - Player's current coin balance
 - `character_sheet` - URL to player's character sheet
+- `armor_level` - Current player armor level
+- `armor_xp_spent` - Total XP contributed to armor progression
+- `weapon_level` - Current player weapon level
+- `weapon_xp_spent` - Total XP contributed to weapon progression
+- `equipment_level` - Current player equipment level
+- `equipment_xp_spent` - Total XP contributed to weapon progression
 
 ### `party_state` Table
 - `role_id` - Discord role ID representing the party
