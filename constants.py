@@ -50,15 +50,15 @@ SHOP_OPTIONS = {
         "cost": 3,
         "description": "For the next adventure, you gain the benefits of the lucky feat."
     },
-    "temporary_weapon_upgrade": {
+    "weapon_upgrade": {
         "cost": 5,
         "description": "Start with weapon one quality higher than character baseline"
     },
-    "temporary_armor_upgrade": {
+    "armor_upgrade": {
         "cost": 5,
         "description": "Start with armor one quality higher than character baseline"
     },
-    "temporary_equipment_upgrade": {
+    "equipment_upgrade": {
         "cost": 5,
         "description": "Start with equipment one quality higher than character baseline"
     },
@@ -73,7 +73,11 @@ SHOP_OPTIONS = {
     "magic_item": {
         "cost": 2,
         "description": "Start with a magic item of character equipment baseline quality"
-    }
+    },
+    "rumor": {
+        "cost": 1,
+        "description": "Gain a useful rumor related to the world."
+    },
 }
 
 EQUIPMENT_LEVEL_REQUIREMENTS = {
