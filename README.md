@@ -10,7 +10,7 @@ A Discord bot designed to assist Dungeon Masters in running westmarch-style, rog
 
 - 💰 **Player Economy System** - Track and manage player coin balances
 - 📊 **Party XP Pooling** - Players contribute XP to shared party leveling system
-- 🛒 **Shop System** - Purchase buffs and bonuses using earned coins
+- 🛒 **Shop System** - Purchase buffs and bonuses using earned XP
 - 📄 **Character Sheet Management** - Store and retrieve character sheet URLs
 - 🎲 **DM Controls** - Administrative commands for game management
 - 🔒 **Role-Based Permissions** - Separate commands for DMs and players
@@ -160,10 +160,13 @@ These commands require the **"Dungeon Master"** role:
 | Command | Description | Usage |
 |---------|-------------|-------|
 | `/dm_test` | Test DM command functionality | `/dm_test` |
-| `/set_balance` | Set a player's balance to a specific amount | `/set_balance @player 100` |
-| `/add_balance` | Add coins to a player's balance | `/add_balance @player 50` |
-| `/set_party_xp_spent` | Set the party's total XP spent | `/set_party_xp_spent 1000 @PartyRole` |
+| `/set_balance` | Set a player's balance to a specific amount | `/set_balance @player 1` |
+| `/add_balance` | Add XP to a player's balance | `/add_balance @player 50` |
+| `/set_party_xp_spent` | Set the party's total XP spent | `/set_party_xp_spent 1 @PartyRole` |
 | `/set_party_level` | Manually set the party's level | `/set_party_level 5 @PartyRole` |
+| `/set_player_equipment_level` | Manually set the players equipment level | `/set_player_equipment_level @player 1` |
+| `/set_player_weapon_level` | Manually set the players weapon level | `/set_player_equipment_level @player 1` |
+| `/set_player_armor_level` | Manually set the players armor level | `/set_player_armor_level @player 1` |
 
 ### Player Commands
 
@@ -173,7 +176,7 @@ Available to all players:
 |---------|-------------|-------|
 | `/players_test` | Test player command functionality | `/players_test` |
 | `/get_balance` | Check your current coin balance | `/get_balance` |
-| `/spend_balance` | Spend coins from your balance | `/spend_balance 20` |
+| `/spend_balance` | Spend XP from your balance | `/spend_balance 20` |
 | `/shop` | View all available shop items | `/shop` |
 | `/buy` | Purchase an item from the shop | `/buy bless` |
 | `/add_party_xp_spent` | Contribute XP to party leveling | `/add_party_xp_spent 100 @PartyRole` |
@@ -181,14 +184,19 @@ Available to all players:
 | `/get_party_level` | Check current party level | `/get_party_level @PartyRole` |
 | `/set_character_sheet` | Save your character sheet URL | `/set_character_sheet https://...` |
 | `/get_character_sheet` | Retrieve your character sheet URL | `/get_character_sheet` |
+| `/get_character_progression` | Retrieve character progression data | `/get_character_progression` |
+| `/add_weapon_xp` | Contribute XP to personal weapon progression | `/add_weapon_xp 5` |
+| `/add_armor_xp` | Contribute XP to personal armor progression | `/add_armor_xp 5` |
+| `/add_equipment_xp` | Contribute XP to personal equipment progression | `/add_equipment_xp 5` |
 
 ### Shop Items
 
 | Item | Cost | Description |
 |------|------|-------------|
-| **Bless** | 5 coins | Gain an extra d4 to add to the next three attack rolls or saving throws |
-| **Reroll** | 10 coins | Purchase a token to reroll a failed roll (requires DM approval) |
-| **Party XP** | Variable | Add XP to the party pool using `/add_party_xp_spent` |
+| **Bless** | 1 XP | Gain an extra d4 to add to the next three attack rolls or saving throws |
+| **Reroll** | 20 XP | Purchase a token to reroll a failed roll (requires DM approval) |
+| **Contracts** | 2, 3, 5, or 8 XP | Purchase a contract for your next adventure |
+| **Lucky** | 3 | Gain the lucky feat for the next adventure |
 
 ## 🗄️ Database Structure
 
