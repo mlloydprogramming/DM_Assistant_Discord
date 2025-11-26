@@ -13,7 +13,13 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             discord_id INTEGER UNIQUE NOT NULL,
             balance INTEGER NOT NULL DEFAULT 0,
-            character_sheet TEXT
+            character_sheet TEXT,
+            armor_level INTEGER NOT NULL DEFAULT 1,
+            armor_xp_spent INTEGER NOT NULL DEFAULT 0,
+            weapon_level INTEGER NOT NULL DEFAULT 1,
+            weapon_xp_spent INTEGER NOT NULL DEFAULT 0,
+            equipment_level INTEGER NOT NULL DEFAULT 1,
+            equipment_xp_spent INTEGER NOT NULL DEFAULT 0
         );
         """
     )
@@ -170,3 +176,177 @@ def get_character_sheet(discord_id: int) -> str | None:
     if row is None:
         return None
     return row[0]
+
+def set_armor_level(discord_id: int, level: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, balance, armor_level)
+        VALUES (?, 0, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET armor_level = excluded.armor_level;
+        """,
+        (discord_id, level),
+    )
+    conn.commit()
+    conn.close()
+
+def get_armor_level(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT armor_level FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 1
+    return row[0]
+
+def add_armor_xp_spent(discord_id: int, amount: int):
+    if amount < 0:
+        raise ValueError("Amount to add must be non-negative")
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, armor_xp_spent)
+        VALUES (?, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET armor_xp_spent = players.armor_xp_spent + excluded.armor_xp_spent;
+        """,
+        (discord_id, amount),
+    )
+    conn.commit()
+    conn.close()
+
+def get_armor_xp_spent(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT armor_xp_spent FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 0
+    return row[0]
+
+def set_weapon_level(discord_id: int, level: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, balance, weapon_level)
+        VALUES (?, 0, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET weapon_level = excluded.weapon_level;
+        """,
+        (discord_id, level),
+    )
+    conn.commit()
+    conn.close()
+
+def get_weapon_level(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT weapon_level FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 1
+    return row[0]
+
+def add_weapon_xp_spent(discord_id: int, amount: int):
+    if amount < 0:
+        raise ValueError("Amount to add must be non-negative")
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, weapon_xp_spent)
+        VALUES (?, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET weapon_xp_spent = players.weapon_xp_spent + excluded.weapon_xp_spent;
+        """,
+        (discord_id, amount),
+    )
+    conn.commit()
+    conn.close()
+
+def get_weapon_xp_spent(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT weapon_xp_spent FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 0
+    return row[0]
+
+def set_equipment_level(discord_id: int, level: int):
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, balance, equipment_level)
+        VALUES (?, 0, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET equipment_level = excluded.equipment_level;
+        """,
+        (discord_id, level),
+    )
+    conn.commit()
+    conn.close()
+
+def get_equipment_level(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT equipment_level FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 1
+    return row[0]
+
+def add_equipment_xp_spent(discord_id: int, amount: int):
+    if amount < 0:
+        raise ValueError("Amount to add must be non-negative")
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        """
+        INSERT INTO players (discord_id, equipment_xp_spent)
+        VALUES (?, ?)
+        ON CONFLICT(discord_id) DO UPDATE
+        SET equipment_xp_spent = players.equipment_xp_spent + excluded.equipment_xp_spent;
+        """,
+        (discord_id, amount),
+    )
+    conn.commit()
+    conn.close()
+
+def get_equipment_xp_spent(discord_id: int) -> int:
+    conn = get_connection()
+    cur = conn.cursor()
+    cur.execute(
+        "SELECT equipment_xp_spent FROM players WHERE discord_id = ?;",
+        (discord_id,),
+    )
+    row = cur.fetchone()
+    conn.close()
+    if row is None:
+        return 0
+    return row[0]  

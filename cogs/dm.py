@@ -2,7 +2,7 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 
-from db import set_balance, add_balance, set_party_xp_spent, set_party_level
+from db import set_balance, add_balance, set_party_xp_spent, set_party_level, set_armor_level, set_weapon_level, set_equipment_level
 
 DM_ROLE_NAME = "Dungeon Master"
 
@@ -40,7 +40,7 @@ class DM(commands.Cog):
         new_balance = amount
         set_balance(member.id, new_balance)
         await interaction.response.send_message(
-            f"Set {member.display_name}'s balance to **{new_balance}** coins.",
+            f"Set {member.display_name}'s balance to **{new_balance}** XP.",
             ephemeral=True
         )
 
@@ -50,7 +50,7 @@ class DM(commands.Cog):
     async def add_balance(self, interaction: discord.Interaction, member: discord.Member, amount: int):
         add_balance(member.id, amount)
         await interaction.response.send_message(
-            f"Added **{amount}** coins to {member.display_name}'s balance.",
+            f"Added **{amount}** XP to {member.display_name}'s balance.",
             ephemeral=True,
         )
 
@@ -76,6 +76,32 @@ class DM(commands.Cog):
             ephemeral=True,
         )
 
+    @app_commands.command(name="set_player_armor_level", description="Set a player's armor level")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def set_player_armor_level(self, interaction: discord.Interaction, member: discord.Member, level: int):
+        set_armor_level(member.id, level)
+        await interaction.response.send_message(
+            f"Set {member.display_name}'s armor level to **{level}**.",
+        )
+
+    @app_commands.command(name="set_player_weapon_level", description="Set a player's weapon level")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def set_player_weapon_level(self, interaction: discord.Interaction, member: discord.Member, level: int):
+        set_weapon_level(member.id, level)
+        await interaction.response.send_message(
+            f"Set {member.display_name}'s weapon level to **{level}**.",
+        )
+
+    @app_commands.command(name="set_player_equipment_level", description="Set a player's equipment level")
+    @app_commands.check(is_dm)
+    @app_commands.guild_only()
+    async def set_player_equipment_level(self, interaction: discord.Interaction, member: discord.Member, level: int):
+        set_equipment_level(member.id, level)
+        await interaction.response.send_message(
+            f"Set {member.display_name}'s equipment level to **{level}**.",
+        )
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(DM(bot))

@@ -35,3 +35,24 @@ SHOP_OPTIONS = {
         "description": "Add XP to the party pool with /add_party_xp_spent."
     }
 }
+
+EQUIPMENT_LEVEL_REQUIREMENTS = {
+    1: 0,
+    2: 200,
+    3: 600,
+    4: 1800,
+}
+
+WEAPON_LEVEL_REQUIREMENTS = {
+    1: 0,
+    2: 250,
+    3: 750,
+    4: 2250,
+}
+
+ARMOR_LEVEL_REQUIREMENTS = {
+    1: 0,
+    2: 300,
+    3: 900,
+    4: 2700,
+}

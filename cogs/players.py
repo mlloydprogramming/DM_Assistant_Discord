@@ -28,7 +28,7 @@ class Players(commands.Cog):
         user_id = interaction.user.id
         bal = db.get_balance(user_id)
         await interaction.response.send_message(
-            f"You have **{bal}** coins.",
+            f"You have **{bal}** XP.",
             ephemeral=True
         )
 
@@ -38,13 +38,13 @@ class Players(commands.Cog):
         current = db.get_balance(user_id)
         if amount > current:
             await interaction.response.send_message(
-                f"You cannot spend **{amount}** coins as you only have **{current}** coins.",
+                f"You cannot spend **{amount}** XP as you only have **{current}** XP.",
                 ephemeral=True,
             )
         else:
             new_balance = db.spend_balance(user_id, amount)
             await interaction.response.send_message(
-                f"Spend **{amount}** coins. New balance is **{new_balance}** coins.",
+                f"Spend **{amount}** XP. New balance is **{new_balance}** XP.",
                 ephemeral=True,
             )
 
@@ -64,10 +64,10 @@ class Players(commands.Cog):
         current = db.get_balance(user_id)
         if amount > current:
             await interaction.response.send_message(
-                f"You cannot spend **{amount}** coins as you only have **{current}** coins.",
+                f"You cannot spend **{amount}** XP as you only have **{current}** XP.",
                 ephemeral=True,
             )
-        # Spend Player coins
+        # Spend Player XP
         db.spend_balance(amount)
         bal = db.get_balance(user_id)
 
@@ -77,7 +77,7 @@ class Players(commands.Cog):
         total_xp_spent = db.get_party_xp_spent(role_id)
 
         await interaction.response.send_message(
-            f"Spent **{amount}** coins. New balance is **{bal}** coins.\n"
+            f"Spent **{amount}** XP. New balance is **{bal}** XP.\n"
             f"The party **{role.name}** has now spent a total of **{total_xp_spent}** XP. You have **{constants.LEVEL_REQUIREMENTS[level+1] - total_xp_spent}** XP left to raise the party level.",
         )
 
@@ -121,7 +121,7 @@ class Players(commands.Cog):
 
         for item_name, item_data in constants.SHOP_OPTIONS.items():
             cost = item_data["cost"]
-            cost_str = f"{cost} coins" if isinstance(cost, int) else cost
+            cost_str = f"{cost} XP" if isinstance(cost, int) else cost
 
             lines.append(
                 f"**{item_name}** - Cost: **{cost_str}**\n"
@@ -159,7 +159,7 @@ class Players(commands.Cog):
 
         if current < cost:
             await interaction.response.send_message(
-                f"You need **{cost}** coins to buy **{item}**, but you only have **{current}** coins.",
+                f"You need **{cost}** XP to buy **{item}**, but you only have **{current}** XP.",
                 ephemeral=True,
             )
             return
@@ -167,11 +167,97 @@ class Players(commands.Cog):
         db.spend_balance(user_id, cost)
 
         await interaction.response.send_message(
-            f"You purchased **{item}** for **{cost}** coins!\n\n"
+            f"You purchased **{item}** for **{cost}** XP!\n\n"
             f"**{item_info['description']}**",
             ephemeral=True,
         )
-            
+
+    @app_commands.command(name="get_character_progress", description="Get your character's equipment, armor, and weapon levels and xp spent")
+    async def get_character_progress(self, interaction: discord.Interaction):
+        user_id = interaction.user.id
+        equipment_level = db.get_equipment_level(user_id)
+        equipment_xp_spent = db.get_equipment_xp_spent(user_id)
+        armor_level = db.get_armor_level(user_id)
+        armor_xp_spent = db.get_armor_xp_spent(user_id)
+        weapon_level = db.get_weapon_level(user_id)
+        weapon_xp_spent = db.get_weapon_xp_spent(user_id)
+
+        await interaction.response.send_message(
+            f"**Your Character Progress:**\n"
+            f"Equipment Level: **{equipment_level}** | XP Spent: **{equipment_xp_spent}**/{constants.EQUIPMENT_LEVEL_REQUIREMENTS.get(equipment_level + 1, 'Max')}\n"
+            f"Armor Level: **{armor_level}** | XP Spent: **{armor_xp_spent}**/{constants.ARMOR_LEVEL_REQUIREMENTS.get(armor_level + 1, 'Max')}\n"
+            f"Weapon Level: **{weapon_level}** | XP Spent: **{weapon_xp_spent}**/{constants.WEAPON_LEVEL_REQUIREMENTS.get(weapon_level + 1, 'Max')}",
+            ephemeral=True,
+        )
+
+    @app_commands.command(name="add_equipment_xp", description="Add XP to your equipment")
+    async def add_equipment_xp(self, interaction: discord.Interaction, amount: int):
+        user_id = interaction.user.id
+        balance = db.get_balance(user_id)
+        if amount > balance:
+            await interaction.response.send_message(
+                f"You cannot spend **{amount}** XP as you only have **{balance}** XP.",
+                ephemeral=True,
+            )
+            return
+        db.spend_balance(user_id, amount)
+
+        bal = db.get_balance(user_id)
+        db.add_equipment_xp_spent(user_id, amount)
+        equipment_xp_status = db.get_equipment_xp_spent(user_id)
+        equipment_level = db.get_equipment_level(user_id)
+
+        await interaction.response.send_message(
+            f"Spent **{amount}** XP. New balance is **{bal}** XP.\n"
+            f"You have now spent a total of **{equipment_xp_status}** XP on your equipment. You have **{constants.EQUIPMENT_LEVEL_REQUIREMENTS.get(equipment_level + 1, 'Max') - equipment_xp_status}** XP left to reach the next equipment level.",
+            ephemeral=True
+        )
+
+    @app_commands.command(name="add_armor_xp", description="Add XP to your armor")
+    async def add_armor_xp(self, interaction: discord.Interaction, amount: int):
+        user_id = interaction.user.id
+        balance = db.get_balance(user_id)
+        if amount > balance:
+            await interaction.response.send_message(
+                f"You cannot spend **{amount}** XP as you only have **{balance}** XP.",
+                ephemeral=True,
+            )
+            return
+        db.spend_balance(user_id, amount)
+
+        bal = db.get_balance(user_id)
+        db.add_armor_xp_spent(user_id, amount)
+        armor_xp_status = db.get_armor_xp_spent(user_id)
+        armor_level = db.get_armor_level(user_id)
+
+        await interaction.response.send_message(
+            f"Spent **{amount}** XP. New balance is **{bal}** XP.\n"
+            f"You have now spent a total of **{armor_xp_status}** XP on your armor. You have **{constants.ARMOR_LEVEL_REQUIREMENTS.get(armor_level + 1, 'Max') - armor_xp_status}** XP left to reach the next armor level.",
+            ephemeral=True
+        )
+
+    @app_commands.command(name="add_weapon_xp", description="Add XP to your weapon")
+    async def add_weapon_xp(self, interaction: discord.Interaction, amount: int):
+        user_id = interaction.user.id
+        balance = db.get_balance(user_id)
+        if amount > balance:
+            await interaction.response.send_message(
+                f"You cannot spend **{amount}** XP as you only have **{balance}** XP.",
+                ephemeral=True,
+            )
+            return
+        db.spend_balance(user_id, amount)
+
+        bal = db.get_balance(user_id)
+        db.add_weapon_xp_spent(user_id, amount)
+        weapon_xp_status = db.get_weapon_xp_spent(user_id)
+        weapon_level = db.get_weapon_level(user_id)
+
+        await interaction.response.send_message(
+            f"Spent **{amount}** XP. New balance is **{bal}** XP.\n"
+            f"You have now spent a total of **{weapon_xp_status}** XP on your weapon. You have **{constants.WEAPON_LEVEL_REQUIREMENTS.get(weapon_level + 1, 'Max') - weapon_xp_status}** XP left to reach the next weapon level.",
+            ephemeral=True
+        )        
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(Players(bot))
