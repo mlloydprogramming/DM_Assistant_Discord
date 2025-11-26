@@ -197,6 +197,12 @@ Available to all players:
 | **Reroll** | 20 XP | Purchase a token to reroll a failed roll (requires DM approval) |
 | **Contracts** | 2, 3, 5, or 8 XP | Purchase a contract for your next adventure |
 | **Lucky** | 3 | Gain the lucky feat for the next adventure |
+| **Weapon** | 5 | Start with weapon one quality higher |
+| **Armor** | 5 | Start with armor one quality higher |
+| **Equipment** | 5 | Start with equipment one quality higher |
+| **Potion Bundle** | 1 | Start with bundle of potions of character equipment quality |
+| **Scroll** | 2 | Start with scrolls of characters equipment quality |
+| **magic_item** | 2 | Start with magic item of character equipment quality | 
 
 ## 🗄️ Database Structure
 

@@ -46,9 +46,33 @@ SHOP_OPTIONS = {
         "cost": 8,
         "description": "A deadly contract that promises high rewards but is fraught with extreme dangers and obstacles."
     },
-    "feeling_lucky": {
+    "lucky": {
         "cost": 3,
         "description": "For the next adventure, you gain the benefits of the lucky feat."
+    },
+    "temporary_weapon_upgrade": {
+        "cost": 5,
+        "description": "Start with weapon one quality higher than character baseline"
+    },
+    "temporary_armor_upgrade": {
+        "cost": 5,
+        "description": "Start with armor one quality higher than character baseline"
+    },
+    "temporary_equipment_upgrade": {
+        "cost": 5,
+        "description": "Start with equipment one quality higher than character baseline"
+    },
+    "Potion Bundle": {
+        "cost": 1,
+        "description": "Start with bundle of potions of character equipment baseline quality"
+    },
+    "scroll": {
+        "cost": 2,
+        "description": "Start with scrolls of characters equipment baseline quality"
+    },
+    "magic_item": {
+        "cost": 2,
+        "description": "Start with a magic item of character equipment baseline quality"
     }
 }
 
