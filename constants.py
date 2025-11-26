@@ -1,58 +1,74 @@
 LEVEL_REQUIREMENTS = {
     1: 0,
-    2: 300,
-    3: 900,
-    4: 2700,
-    5: 6500,
-    6: 14000,
-    7: 23000,
-    8: 34000,
-    9: 48000,
-    10: 64000,
-    11: 85000,
-    12: 100000,
-    13: 120000,
-    14: 140000,
-    15: 165000,
-    16: 195000,
-    17: 225000,
-    18: 265000,
-    19: 305000,
-    20: 355000,
+    2: 20,
+    3: 40,
+    4: 60,
+    5: 80,
+    6: 100,
+    7: 120,
+    8: 140,
+    9: 160,
+    10: 180,
+    11: 200,
+    12: 220,
+    13: 240,
+    14: 260,
+    15: 280,
+    16: 300,
+    17: 320,
+    18: 340,
+    19: 360,
+    20: 380,
 }
 
 SHOP_OPTIONS = {
     "bless": {
-        "cost": 5,
+        "cost": 1,
         "description": "Gain an extra d4 to add to the next three attack rolls or saving throws."
     },
     "reroll": {
-        "cost": 10,
+        "cost": 20,
         "description": "Purchase a token to reroll a failed roll (DM approval)."
     },
-    "party_xp": {
-        "cost": "variable",
-        "description": "Add XP to the party pool with /add_party_xp_spent."
+    "easy_contract": {
+        "cost": 2,
+        "description": "An easy contract that grants minor additional rewards upon completion but comes with minimal additional risks."
+    },
+    "medium_contract": {
+        "cost": 3,
+        "description": "A medium contract that offers moderate additional rewards and some added challenges."
+    },
+    "hard_contract": {
+        "cost": 5,
+        "description": "A hard contract that provides significant additional rewards but includes substantial risks and challenges."
+    },
+    "deadly_contract": {
+        "cost": 8,
+        "description": "A deadly contract that promises high rewards but is fraught with extreme dangers and obstacles."
+    },
+    "feeling_lucky": {
+        "cost": 3,
+        "description": "For the next adventure, you gain the benefits of the lucky feat."
     }
 }
 
 EQUIPMENT_LEVEL_REQUIREMENTS = {
     1: 0,
-    2: 200,
-    3: 600,
-    4: 1800,
+    2: 20,
+    3: 40,
+    4: 60,
 }
 
 WEAPON_LEVEL_REQUIREMENTS = {
     1: 0,
-    2: 250,
-    3: 750,
-    4: 2250,
+    2: 20,
+    3: 40,
+    4: 60,
 }
 
 ARMOR_LEVEL_REQUIREMENTS = {
     1: 0,
-    2: 300,
-    3: 900,
-    4: 2700,
+    2: 20,
+    3: 40,
+    4: 60,
 }

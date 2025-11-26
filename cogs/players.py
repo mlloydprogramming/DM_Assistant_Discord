@@ -150,7 +150,7 @@ class Players(commands.Cog):
         if cost == "variable":
             await interaction.response.send_message(
                 "This item has a variable cost. Please utilize the dedicated command.\n"
-                "Use ```/add_party_xp_spent``` to add XP to the party pool.",
+                f"{item_info['description']}",
                 ephemeral=True,
             )
             return
@@ -172,7 +172,7 @@ class Players(commands.Cog):
             ephemeral=True,
         )
 
-    @app_commands.command(name="get_character_progress", description="Get your character's equipment, armor, and weapon levels and xp spent")
+    @app_commands.command(name="get_character_progress", description="Get your character's equipment, armor, and weapon levels and XP spent")
     async def get_character_progress(self, interaction: discord.Interaction):
         user_id = interaction.user.id
         equipment_level = db.get_equipment_level(user_id)
